@@ -29,23 +29,32 @@ func NewCmdAlpha(in io.Reader, out io.Writer) *cobra.Command {
 		Short: "Kubeadm experimental sub-commands",
 	}
 
-	kubeconfigCmd := NewCmdKubeConfigUtility(out)
-	deprecateCommand(`please use the same command under "kubeadm kubeconfig"`, kubeconfigCmd)
-	cmd.AddCommand(kubeconfigCmd)
+	cmd.AddCommand(newCmdKubeConfigUtility(out))
+
+	const shDeprecatedMessage = "self-hosting support in kubeadm is deprecated " +
+		"and will be removed in a future release"
+	shCommand := newCmdSelfhosting(in)
+	shCommand.Deprecated = shDeprecatedMessage
+	for _, cmd := range shCommand.Commands() {
+		cmd.Deprecated = shDeprecatedMessage
+	}
+	cmd.AddCommand(shCommand)
 
 	certsCommand := NewCmdCertsUtility(out)
-	deprecateCommand(`please use the same command under "kubeadm certs"`, certsCommand)
+	deprecateCertsCommand(certsCommand)
 	cmd.AddCommand(certsCommand)
 
 	return cmd
 }
 
-func deprecateCommand(msg string, cmds ...*cobra.Command) {
+func deprecateCertsCommand(cmds ...*cobra.Command) {
+	const deprecatedMessage = "please use the same command under \"kubeadm certs\""
+
 	for _, cmd := range cmds {
-		cmd.Deprecated = msg
+		cmd.Deprecated = deprecatedMessage
 		childCmds := cmd.Commands()
 		if len(childCmds) > 0 {
-			deprecateCommand(msg, childCmds...)
+			deprecateCertsCommand(childCmds...)
 		}
 	}
 }
