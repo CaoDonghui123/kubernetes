@@ -304,9 +304,6 @@ const (
 	// Kubelet defines variable used internally when referring to the Kubelet
 	Kubelet = "kubelet"
 
-	// SelfHostingPrefix describes the prefix workloads that are self-hosted by kubeadm has
-	SelfHostingPrefix = "self-hosted-"
-
 	// KubeCertificatesVolumeName specifies the name for the Volume that is used for injecting certificates to control plane components (can be both a hostPath volume or a projected, all-in-one volume)
 	KubeCertificatesVolumeName = "k8s-certs"
 
@@ -326,7 +323,7 @@ const (
 	CoreDNSDeploymentName = "coredns"
 
 	// CoreDNSImageName specifies the name of the image for CoreDNS add-on
-	CoreDNSImageName = "coredns"
+	CoreDNSImageName = "coredns/coredns"
 
 	// KubeDNSConfigMap specifies in what ConfigMap in the kube-system namespace the kube-dns config should be stored
 	KubeDNSConfigMap = "kube-dns"
@@ -347,7 +344,7 @@ const (
 	KubeDNSVersion = "1.14.13"
 
 	// CoreDNSVersion is the version of CoreDNS to be deployed if it is used
-	CoreDNSVersion = "1.7.0"
+	CoreDNSVersion = "v1.8.0"
 
 	// ClusterConfigurationKind is the string kind value for the ClusterConfiguration struct
 	ClusterConfigurationKind = "ClusterConfiguration"
@@ -553,11 +550,6 @@ func GetBootstrapKubeletKubeConfigPath() string {
 // GetKubeletKubeConfigPath returns the location on the disk where kubelet kubeconfig is located by default
 func GetKubeletKubeConfigPath() string {
 	return filepath.Join(KubernetesDir, KubeletKubeConfigFileName)
-}
-
-// AddSelfHostedPrefix adds the self-hosted- prefix to the component name
-func AddSelfHostedPrefix(componentName string) string {
-	return fmt.Sprintf("%s%s", SelfHostingPrefix, componentName)
 }
 
 // CreateTempDirForKubeadm is a function that creates a temporary directory under /etc/kubernetes/tmp (not using /tmp as that would potentially be dangerous)
